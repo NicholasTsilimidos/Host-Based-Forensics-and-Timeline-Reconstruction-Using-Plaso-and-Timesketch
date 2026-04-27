@@ -17,7 +17,7 @@ A forensic investigation of the Digital Corpora 2009 M57 Patents scenario, demon
 9. [Conclusion](#9-conclusion)
 10. [Repository Structure](#10-repository-structure)
 11. [How to Reproduce](#11-how-to-reproduce)
-12. [Team & References](#12-team--references)
+12. [References](#12-references)
 
 ---
 
