@@ -1,11 +1,6 @@
 # Host-Based Forensics & Timeline Reconstruction Using Plaso + Timesketch
 
-> A forensic investigation of the Digital Corpora 2009 M57 Patents scenario, demonstrating how open-source timeline reconstruction tools support real-world incident response.
-
-**Course:** BFOR 643 — Incident Handling
-**Semester:** Spring 2026
-**Instructor:** Dr. Vinicius Lima
-**Team:** Nicholas Tsilimidos · Craig Perkins · Shreyak Karmacharya · Ikram Ramdani
+A forensic investigation of the Digital Corpora 2009 M57 Patents scenario, demonstrating how open-source timeline reconstruction tools support real-world incident response.
 
 ---
 
@@ -34,7 +29,7 @@ Using **Plaso (log2timeline)**, we processed the disk images to generate a detai
 
 The generated timelines were further visualized and analyzed using **Timesketch**, allowing us to correlate events across multiple sources and reconstruct exactly how activity occurred on the system. This approach supports the incident response process by helping determine the scope of an incident and providing evidence-based conclusions.
 
-By the end of the project, we were able to identify a suspect, confirm the method of exfiltration, document the full scale of the data theft, and produce a court-traceable timeline of activity — all from disk artifacts alone.
+By the end of the project, we were able to identify a suspect, confirm the method of exfiltration, document the full scale of the data theft, and produce a court-traceable timeline of activity, all from disk artifacts alone.
 
 ---
 
@@ -45,7 +40,7 @@ In real-world incident response, understanding **what happened, when it happened
 This project demonstrates several principles that apply directly to professional IR practice:
 
 - **Open-source tools are production-ready.** Plaso and Timesketch are used by forensic labs and law enforcement worldwide, not just in academic settings.
-- **Timeline forensics scales.** A single disk image can contain millions of timestamped events. Manual analysis is not viable — automated extraction and visualization are essential.
+- **Timeline forensics scales.** A single disk image can contain millions of timestamped events. Manual analysis is not viable, automated extraction and visualization are essential.
 - **Cross-source correlation strengthens evidence.** When the same event appears on multiple independent sources at matching timestamps, the evidentiary value increases substantially.
 - **Host forensics is one layer of a complete investigation.** The full picture requires network forensics and memory analysis alongside host-based evidence.
 
@@ -73,20 +68,20 @@ We chose this dataset for several reasons:
 
 The full scenario document is available in [`docs/exfiltration-scenario.pdf`](./docs/exfiltration-scenario.pdf). In brief:
 
-> **M57.biz** is a patent research firm with four employees: Pat (CEO), Terry (IT), and two patent researchers, Jo and Charlie. Over the course of November and December 2009, proprietary client research was being passed to an outside party. On December 11, 2009, police seized all workstations and USB drives. Our task was to identify who was responsible, how they did it, and what was taken — using only the host-based disk artifacts.
+> **M57.biz** is a patent research firm with four employees: Pat (CEO), Terry (IT), and two patent researchers, Jo and Charlie. Over the course of November and December 2009, proprietary client research was being passed to an outside party. On December 11, 2009, police seized all workstations and USB drives. Our task was to identify who was responsible, how they did it, and what was taken, using only the host-based disk artifacts.
 
 ### Evidence Processed
 
 | Source | Description |
 |---|---|
-| Jo Smith — Workstation | Windows XP workstation, primary suspect machine |
-| Jo Smith — Personal USB | Seized by warrant, contained personal files |
-| Jo Smith — Work USB | Company-issued USB drive |
-| Pat McGoo — Workstation | CEO workstation |
-| Charlie Brown — Workstation | Co-researcher workstation |
-| Charlie Brown — Work USB | Company-issued USB drive |
-| Terry Johnson — Workstation | IT staff workstation |
-| Terry Johnson — Work USB | Company-issued USB drive |
+| Jo Smith - Workstation | Windows XP workstation, primary suspect machine |
+| Jo Smith - Personal USB | Seized by warrant, contained personal files |
+| Jo Smith - Work USB | Company-issued USB drive |
+| Pat McGoo - Workstation | CEO workstation |
+| Charlie Brown - Workstation | Co-researcher workstation |
+| Charlie Brown - Work USB | Company-issued USB drive |
+| Terry Johnson - Workstation | IT staff workstation |
+| Terry Johnson - Work USB | Company-issued USB drive |
 
 Total: **8 disk images** processed.
 
@@ -105,8 +100,8 @@ Plaso is an open-source forensic framework, originally developed by Kristinn Gud
 - Cross-platform support (Linux, macOS via Docker, Windows)
 
 **Limitations we encountered:**
-- Cannot read the body content of email storage formats (`.dbx`, `.pst`) — only metadata
-- Cannot recover deleted file contents — only metadata about deleted files
+- Cannot read the body content of email storage formats (`.dbx`, `.pst`), only metadata
+- Cannot recover deleted file contents, only metadata about deleted files
 - Processing is single-threaded by default; a single large disk image can take 45–90 minutes
 - Susceptible to timestomping (deliberate timestamp manipulation by an attacker)
 
@@ -134,27 +129,27 @@ Timesketch is an open-source web-based platform for collaborative forensic timel
 
 Our investigation followed six phases. The full reproduction commands are in [Section 11](#11-how-to-reproduce).
 
-### Phase 1 — Environment Setup
+### Phase 1 - Environment Setup
 
 Plaso was run via Docker. We tested both macOS (Apple Silicon, with `linux/amd64` emulation) and a Kali Linux VM. The Linux VM was significantly more stable and faster.
 
 Timesketch was deployed via its official Docker Compose configuration on a Windows host after initial setup attempts on macOS proved problematic.
 
-### Phase 2 — Artifact Extraction with Plaso
+### Phase 2 - Artifact Extraction with Plaso
 
 We ran `log2timeline.py` against each of the 8 disk images. Several flags were essential:
 
-- `--partitions all` — required for the multi-partition M57 images
-- `--vfs_back_end tsk` — uses The Sleuth Kit backend for stability under Docker emulation
-- `--single_process` — prevents worker crashes on emulated environments
+- `--partitions all` - required for the multi-partition M57 images
+- `--vfs_back_end tsk` - uses The Sleuth Kit backend for stability under Docker emulation
+- `--single_process` - prevents worker crashes on emulated environments
 
 Each extraction produced a `.plaso` storage file containing every timestamped artifact found on the image.
 
-### Phase 3 — Timeline Export with psort
+### Phase 3 - Timeline Export with psort
 
 Each `.plaso` file was exported to a CSV timeline using `psort.py` with the `dynamic` output format. This produced human-readable timelines that could be further filtered and analyzed.
 
-### Phase 4 — Filtering and Analysis
+### Phase 4 - Filtering and Analysis
 
 The raw CSV timelines were too large to analyze manually (millions of events per image). We wrote targeted Python scripts to filter the data by:
 - Date ranges (focusing on November–December 2009)
@@ -163,7 +158,7 @@ The raw CSV timelines were too large to analyze manually (millions of events per
 
 A sample script is provided in [`scripts/email-activity-filter.py`](./scripts/email-activity-filter.py).
 
-### Phase 5 — Timesketch Visualization
+### Phase 5 - Timesketch Visualization
 
 The 8 `.plaso` files were imported into a single Timesketch sketch as separate named timelines. This allowed us to:
 - Search across all sources simultaneously
@@ -172,7 +167,7 @@ The 8 `.plaso` files were imported into a single Timesketch sketch as separate n
 - Compare suspect and non-suspect USBs side-by-side
 - Build a Story narrative linking the evidence chronologically
 
-### Phase 6 — Findings Documentation
+### Phase 6 - Findings Documentation
 
 All findings were documented with traceability to their source artifacts and timestamps. See [Section 6](#6-investigation-findings) for the summary and the [`findings/`](./findings/) directory for the full breakdown.
 
@@ -184,7 +179,7 @@ All findings were documented with traceability to their source artifacts and tim
 
 ### Suspect Identified
 
-**Jo Smith** — Patent Researcher at M57.biz (`jo@m57.biz`)
+**Jo Smith** - Patent Researcher at M57.biz (`jo@m57.biz`)
 
 Confirmation came from multiple Plaso parsers across the suspect's workstation timeline: registry artifacts (`HKEY_CURRENT_USER`), the user profile path (`C:\Documents and Settings\Jo\`), and prefetch artifacts.
 
@@ -198,8 +193,8 @@ Confirmation came from multiple Plaso parsers across the suspect's workstation t
 | Nov 23, 2009 | Python 2.6 installed with email libraries; email shortcut created on the desktop. |
 | Nov 25, 2009 | Hotmail accessed a second time. |
 | Dec 09, 2009 | `Inbox.dbx` modified (Outlook Express). |
-| Dec 10, 2009 | **4,794 PDFs copied** across 17 folders (`Papers1` through `Papers17`) — bulk exfiltration the day before police arrived. |
-| Dec 11, 2009 | Outlook Express launched 14 times — consistent with deleting sent email evidence. |
+| Dec 10, 2009 | **4,794 PDFs copied** across 17 folders (`Papers1` through `Papers17`), bulk exfiltration the day before police arrived. |
+| Dec 11, 2009 | Outlook Express launched 14 times and consistent with deleting sent email evidence. |
 
 ### Scale of Theft
 
@@ -221,17 +216,17 @@ Cross-comparison with Charlie's and Terry's work USBs revealed **no matching fol
 
 ### What We Established
 
-Plaso and Timesketch operate within the **Detection and Analysis** phase of the incident response lifecycle. From disk artifacts alone, we were able to establish *who* the suspect was, *what* was taken, *how* it was moved, and *when* the activity occurred. Every finding ties back to a specific artifact and timestamp — no conclusions were assumed or extrapolated.
+Plaso and Timesketch operate within the **Detection and Analysis** phase of the incident response lifecycle. From disk artifacts alone, we were able to establish *who* the suspect was, *what* was taken, *how* it was moved, and *when* the activity occurred. Every finding ties back to a specific artifact and timestamp, no conclusions were assumed or extrapolated.
 
 ### What Strengthens the Case
 
 - **Read-only processing.** All disk images were processed without modification, preserving the original evidence.
 - **Reproducible methodology.** Every command and flag is documented in this repository. Any analyst can run the same commands and produce identical output.
-- **Cross-source corroboration.** The same exfiltration events appear on both Jo's workstation and Jo's work USB at matching timestamps — evidence from two independent sources.
+- **Cross-source corroboration.** The same exfiltration events appear on both Jo's workstation and Jo's work USB at matching timestamps, evidence from two independent sources.
 
 ### What's Still Missing
 
-- We can confirm that files were copied to a USB drive — we cannot prove where they went after that.
+- We can confirm that files were copied to a USB drive, we cannot prove where they went after that.
 - The outside contact could not be identified from the disk image alone.
 - A timeline demonstrates *activity*, not *intent*. The intent argument must be made in court by a human.
 
@@ -251,7 +246,7 @@ Host forensics tells you what happened on the machine. **Network forensics** tel
 ### Working With the Data
 
 - **CSV timelines are massive.** A single disk image can produce millions of events. Manual review of raw CSVs is not viable. Always use either Python filtering or Timesketch's search interface.
-- **Timestamps can be manipulated.** *Timestomping* — the deliberate alteration of file timestamps by an attacker — is a real technique. Always treat timestamps as evidence subject to scrutiny rather than ground truth.
+- **Timestamps can be manipulated.** *Timestomping* is the deliberate alteration of file timestamps by an attacker. Always treat timestamps as evidence subject to scrutiny rather than ground truth.
 
 ### Processing & Performance
 
@@ -260,18 +255,18 @@ Host forensics tells you what happened on the machine. **Network forensics** tel
 
 ### Tool Limitations
 
-- **Plaso cannot parse email content.** It captures `.dbx` and `.pst` files as metadata only — it does not extract message bodies. This was a real gap in our investigation, as the outside contact's identity likely lived in those messages.
+- **Plaso cannot parse email content.** It captures `.dbx` and `.pst` files as metadata only, it does not extract message bodies. This was a real gap in our investigation, as the outside contact's identity likely lived in those messages.
 - **Timesketch alone is incomplete.** A full investigation requires network forensics (PCAP analysis) and memory forensics (RAM dump analysis) alongside host-based timeline reconstruction.
 
 ---
 
 ## 9. Conclusion
 
-When we started this project, we had a disk image, two tools, and a scenario. By the end of it, we had a suspect, a complete timeline, and a story that the evidence told on its own. That is what host-based forensics is — not building a case from scratch, but reading one that already exists in the artifacts.
+When we started this project, we had a disk image, two tools, and a scenario. By the end of it, we had a suspect, a complete timeline, and a story that the evidence told on its own. That is what host-based forensics is, not building a case from scratch, but reading one that already exists in the artifacts.
 
 Every file copy, every Outlook Express launch, every Hotmail session left a trace. Plaso pulled those traces out of 8 different sources. Timesketch let us connect them together and make sense of them as a unified investigation.
 
-The tools work. They are not perfect — we ran into limitations, and there are questions this investigation could not answer. But what we have is solid, documented, and traceable. In a real incident, that is the foundation everything else gets built on.
+The tools work. They are not perfect, we ran into limitations, and there are questions this investigation could not answer. But what we have is solid, documented, and traceable. In a real incident, that is the foundation everything else gets built on.
 
 **Host forensics is the starting point. Not the finish line.**
 
@@ -282,30 +277,30 @@ The tools work. They are not perfect — we ran into limitations, and there are 
 ```
 m57-host-forensics/
 │
-├── README.md                          ← this file
+├─ README.md                          ← this file
 │
-├── docs/
-│   ├── exfiltration-scenario.pdf      ← original scenario document
-│   └── m57-background.md              ← extended dataset and company background
+├─ docs/
+│   ├─ exfiltration-scenario.pdf      ← original scenario document
+│   └─ m57-background.md              ← extended dataset and company background
 │
-├── scripts/
-│   ├── extract-all-images.sh          ← Plaso extraction commands for all 8 images
-│   ├── export-all-csvs.sh             ← psort export commands
-│   └── email-activity-filter.py       ← Python filtering script (demo example)
+├─ scripts/
+│   ├─ extract-all-images.sh          ← plaso extraction commands for all 8 images
+│   ├─ export-all-csvs.sh             ← psort export commands
+│   └─ email-activity-filter.py       ← python filtering script (demo example)
 │
-├── sample-data/
-│   ├── README.md                      ← explains sample files and dataset access
-│   ├── charlie-work-usb-2009-12-11.E01
-│   ├── charlie-work-usb.plaso
-│   └── charlie-work-usb-timeline.csv
+├─ sample-data/
+│   ├─ README.md                      ← explains sample files and dataset access
+│   ├─ charlie-work-usb-2009-12-11.E01
+│   ├─ charlie-work-usb.plaso
+│   └─ charlie-work-usb-timeline.csv
 │
-├── findings/
-│   ├── investigation-summary.md       ← detailed findings: who, what, how, cover-up
-│   ├── ioc-timeline.md                ← indicators of compromise timeline
-│   ├── timesketch-analysis.md         ← Timesketch screenshots with analysis
-│   └── screenshots/                   ← Timesketch screenshots referenced above
+├─ findings/
+│   ├─ investigation-summary.md       ← detailed findings: who, what, how, cover-up
+│   ├─ ioc-timeline.md                ← indicators of compromise timeline
+│   ├─ timesketch-analysis.md         ← timesketch screenshots with analysis
+│   └─ screenshots/                   ← timesketch screenshots referenced above
 │
-└── presentation.pptx                  ← final presentation deck (reference)
+└─ presentation.pptx                  ← final presentation file
 ```
 
 ---
@@ -314,18 +309,18 @@ m57-host-forensics/
 
 ### Prerequisites
 
-- **Docker Desktop** (for Plaso) — [docker.com](https://www.docker.com/)
+- **Docker Desktop** (for Plaso) - [docker.com](https://www.docker.com/)
 - **Python 3.8+** (for filtering scripts)
-- **Timesketch** instance — see [official Timesketch documentation](https://timesketch.org/guides/admin/install/) for installation
-- The M57 dataset — download from [Digital Corpora](https://digitalcorpora.org/corpora/scenarios/m57-patents-scenario/)
+- **Timesketch** instance - see [official Timesketch documentation](https://timesketch.org/guides/admin/install/) for installation
+- The M57 dataset - download from [Digital Corpora](https://digitalcorpora.org/corpora/scenarios/m57-patents-scenario/)
 
 ### Recommended Environment
 
 Based on our experience, we recommend:
-- **Plaso:** Native Linux (Ubuntu, Kali) — avoid macOS if possible
-- **Timesketch:** Linux or Windows host — avoid macOS
+- **Plaso:** Native Linux (Ubuntu, Kali) - avoid macOS if possible
+- **Timesketch:** Linux or Windows host - avoid macOS
 
-### Step 1 — Set Up Project Directory
+### Step 1 - Set Up Project Directory
 
 Create a project directory with the following structure:
 
@@ -340,7 +335,7 @@ Place the M57 disk images in:
 - Workstation images → `~/m57-project/datasets/drives/`
 - USB images → `~/m57-project/datasets/usb/`
 
-### Step 2 — Pull the Plaso Docker Image
+### Step 2 - Pull the Plaso Docker Image
 
 ```bash
 docker pull log2timeline/plaso
@@ -352,7 +347,7 @@ Verify the installation:
 docker run --rm log2timeline/plaso log2timeline.py --version
 ```
 
-### Step 3 — Extract Artifacts with Plaso
+### Step 3 - Extract Artifacts with Plaso
 
 Run the following command **for each disk image**. Adjust the input file path and output filename as needed.
 
@@ -370,7 +365,7 @@ docker run --rm --platform linux/amd64 \
 | Flag | Purpose |
 |---|---|
 | `--platform linux/amd64` | Forces Intel emulation under Docker (required on Apple Silicon) |
-| `-v ~/m57-project:/data` | Mounts your project directory into the container — **adjust the host path to match yours** |
+| `-v ~/m57-project:/data` | Mounts your project directory into the container, **make sure to adjust the host path to match yours** |
 | `--storage_file` | Output `.plaso` file path |
 | `--partitions all` | Processes all partitions (required for multi-partition images) |
 | `--vfs_back_end tsk` | Uses The Sleuth Kit VFS backend (more stable under emulation) |
@@ -380,7 +375,7 @@ docker run --rm --platform linux/amd64 \
 
 The full set of commands for all 8 images is in [`scripts/extract-all-images.sh`](./scripts/extract-all-images.sh).
 
-### Step 4 — Export to CSV with psort
+### Step 4 - Export to CSV with psort
 
 ```bash
 docker run --rm --platform linux/amd64 \
@@ -393,7 +388,7 @@ docker run --rm --platform linux/amd64 \
 
 The full set of export commands is in [`scripts/export-all-csvs.sh`](./scripts/export-all-csvs.sh).
 
-### Step 5 — Filter the Timeline (Optional but Recommended)
+### Step 5 - Filter the Timeline (Optional but Recommended)
 
 The raw CSVs are too large to analyze directly. Use the Python filtering script to reduce the load:
 
@@ -404,7 +399,7 @@ python3 scripts/email-activity-filter.py
 
 > **Important:** Open `scripts/email-activity-filter.py` and update the `input_file` variable to match your actual CSV path before running.
 
-### Step 6 — Import to Timesketch
+### Step 6 - Import to Timesketch
 
 Once your Timesketch instance is running, import each `.plaso` file as a separate timeline:
 
@@ -418,7 +413,7 @@ timesketch_importer \
 
 Repeat for each of the 8 `.plaso` files, naming each timeline appropriately (e.g., "Jo Work USB", "Charlie Machine").
 
-### Step 7 — Investigate in Timesketch
+### Step 7 - Investigate in Timesketch
 
 Recommended search queries to reproduce our key findings:
 
@@ -434,25 +429,12 @@ Apply date filters (`2009-12-10` to `2009-12-11`) to isolate the critical 48-hou
 
 ---
 
-## 12. Team & References
-
-### Team
-
-| Member | Role |
-|---|---|
-| Nicholas Tsilimidos | Methodology, Timesketch analysis |
-| Craig Perkins | Tool research, documentation |
-| Shreyak Karmacharya | Plaso extraction, Python filtering, demo |
-| Ikram Ramdani | Findings documentation, presentation |
+## 12. References
 
 ### References
 
-- **Digital Corpora — M57 Patents Scenario.** [https://digitalcorpora.org/corpora/scenarios/m57-patents-scenario/](https://digitalcorpora.org/corpora/scenarios/m57-patents-scenario/)
+- **Digital Corpora: M57 Patents Scenario.** [https://digitalcorpora.org/corpora/scenarios/m57-patents-scenario/](https://digitalcorpora.org/corpora/scenarios/m57-patents-scenario/)
 - **Plaso Documentation.** [https://plaso.readthedocs.io/](https://plaso.readthedocs.io/)
 - **Timesketch Documentation.** [https://timesketch.org/](https://timesketch.org/)
 - **The Sleuth Kit (TSK).** [https://www.sleuthkit.org/](https://www.sleuthkit.org/)
-- **NIST SP 800-86 — Guide to Integrating Forensic Techniques into Incident Response.** [https://csrc.nist.gov/publications/detail/sp/800-86/final](https://csrc.nist.gov/publications/detail/sp/800-86/final)
-
----
-
-*This project was completed as part of BFOR 643 — Incident Handling, Spring 2026.*
+- **NIST SP 800-86 - Guide to Integrating Forensic Techniques into Incident Response.** [https://csrc.nist.gov/publications/detail/sp/800-86/final](https://csrc.nist.gov/publications/detail/sp/800-86/final)
