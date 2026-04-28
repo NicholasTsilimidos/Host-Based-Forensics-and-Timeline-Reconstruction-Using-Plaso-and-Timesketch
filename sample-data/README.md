@@ -2,7 +2,7 @@
 
 This directory contains a representative sample from the M57 dataset to allow reviewers to verify our methodology without downloading the full corpus.
 
-We selected Charlie's work USB because it is small enough to host on GitHub and serves as supporting evidence in our investigation (used to confirm Jo's exfiltration pattern was unique).
+We selected Charlie's work USB because it is small enough to host on GitHub and serves as supporting evidence in our investigation. It was used to confirm that Jo's exfiltration pattern was unique.
 
 ## Files
 
@@ -14,7 +14,7 @@ We selected Charlie's work USB because it is small enough to host on GitHub and 
 
 ## Reproducing These Files
 
-To regenerate the `.plaso` and `.csv` from the source image, see the main [README](../README.md#11-how-to-reproduce). The same commands apply — just point them at this image.
+To regenerate the `.plaso` and `.csv` from the source image, see the main [README](../README.md#11-how-to-reproduce). The same commands apply, just point them at this image.
 
 ## Full Dataset
 
