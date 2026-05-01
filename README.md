@@ -39,10 +39,10 @@ In real-world incident response, understanding **what happened, when it happened
 
 This project demonstrates several principles that apply directly to professional IR practice:
 
-- **Open-source tools are production-ready.** Plaso and Timesketch are used by forensic labs and law enforcement worldwide, not just in academic settings.
-- **Timeline forensics scales.** A single disk image can contain millions of timestamped events. Manual analysis is not viable, automated extraction and visualization are essential.
-- **Cross-source correlation strengthens evidence.** When the same event appears on multiple independent sources at matching timestamps, the evidentiary value increases substantially.
-- **Host forensics is one layer of a complete investigation.** The full picture requires network forensics and memory analysis alongside host-based evidence.
+- **Open-source tools are production-ready:** Plaso and Timesketch are used by forensic labs and law enforcement worldwide, not just in academic settings.
+- **Timeline forensics scales:** A single disk image can contain millions of timestamped events. Manual analysis is not viable, automated extraction and visualization are essential.
+- **Cross-source correlation strengthens evidence:** When the same event appears on multiple independent sources at matching timestamps, the evidentiary value increases substantially.
+- **Host forensics is one layer of a complete investigation:** The full picture requires network forensics and memory analysis alongside host-based evidence.
 
 Understanding both the strengths and the limitations of these tools is critical for any analyst preparing forensic findings that may be used in legal proceedings.
 
@@ -56,17 +56,17 @@ We used the **2009 M57 Patents Scenario**, a publicly available forensic trainin
 
 We chose this dataset for several reasons:
 
-- **Realistic environment.** The scenario simulates a functioning corporate setting rather than a synthetic CTF challenge.
-- **Multi-source evidence.** Workstations and USB drives provide opportunities for cross-source correlation.
-- **Temporal depth.** Daily snapshots over multiple weeks allow for meaningful timeline analysis.
-- **Publicly available.** Anyone can download the dataset and reproduce our work.
-- **Well-studied.** The scenario has been used in academic research, allowing us to validate our findings against known outcomes.
+- **Realistic environment:** The scenario simulates a functioning corporate setting rather than a synthetic CTF challenge.
+- **Multi-source evidence:** Workstations and USB drives provide opportunities for cross-source correlation.
+- **Temporal depth:** Daily snapshots over multiple weeks allow for meaningful timeline analysis.
+- **Publicly available:** Anyone can download the dataset and reproduce our work.
+- **Well-studied:** The scenario has been used in academic research, allowing us to validate our findings against known outcomes.
 
 > **Note on dataset size:** The full M57 dataset is several hundred gigabytes. We have not included the full disk images in this repository. Instead, we have provided a **sample USB image** (Charlie's work USB) along with its corresponding `.plaso` file and CSV timeline in the [`sample-data/`](./sample-data/) directory. The complete dataset is available at the link above.
 
 ### The Exfiltration Scenario
 
-The full scenario document is available in [`docs/exfiltration-scenario.pdf`](./docs/exfiltration-scenario.pdf). In brief:
+The full scenario document is available in [`docs/exfiltration-scenario.pdf`](./docs/M57-Patents-Exfiltration-Scenario.pdf).
 
 > **M57.biz** is a patent research firm with four employees: Pat (CEO), Terry (IT), and two patent researchers, Jo and Charlie. Over the course of November and December 2009, proprietary client research was being passed to an outside party. On December 11, 2009, police seized all workstations and USB drives. Our task was to identify who was responsible, how they did it, and what was taken, using only the host-based disk artifacts.
 
@@ -156,11 +156,9 @@ The raw CSV timelines were too large to analyze manually (millions of events per
 - Parser type (e.g., `prefetch`, `usnjrnl`, `msiecf`)
 - Keywords related to the investigation (e.g., `XFER`, `Papers`, `Outlook`, `Hotmail`, `MSIMN`)
 
-A sample script is provided in [`scripts/email-activity-filter.py`](./scripts/email-activity-filter.py).
-
 ### Phase 5 - Timesketch Visualization
 
-The 8 `.plaso` files were imported into a single Timesketch sketch as separate named timelines. This allowed us to:
+The `.plaso` files were imported into a single Timesketch sketch as separate named timelines. This allowed us to:
 - Search across all sources simultaneously
 - Tag suspicious events with custom labels (`exfiltration`, `cover-up`, `webmail-access`)
 - Apply date-range filters to isolate critical windows (e.g., December 10–11)
@@ -283,11 +281,6 @@ m57-host-forensics/
 │   ├─ exfiltration-scenario.pdf      ← original scenario document
 │   └─ m57-background.md              ← extended dataset and company background
 │
-├─ scripts/
-│   ├─ extract-all-images.sh          ← plaso extraction commands for all 8 images
-│   ├─ export-all-csvs.sh             ← psort export commands
-│   └─ email-activity-filter.py       ← python filtering script (demo example)
-│
 ├─ sample-data/
 │   ├─ README.md                      ← explains sample files and dataset access
 │   ├─ charlie-work-usb-2009-12-11.E01
@@ -355,9 +348,9 @@ Run the following command **for each disk image**. Adjust the input file path an
 docker run --rm --platform linux/amd64 \
   -v ~/m57-project:/data \
   log2timeline/plaso \
-  log2timeline.py --storage_file /data/plaso-output/jo-machine.plaso \
+  log2timeline.py --storage_file /data/plaso-output/charlie-work-usb.plaso \
   --partitions all --vfs_back_end tsk --single_process \
-  /data/datasets/drives/jo-2009-12-11-002.E01
+  /data/datasets/usb/charlie-work-usb-2009-12-11.E01
 ```
 
 **What each flag does:**
@@ -373,8 +366,6 @@ docker run --rm --platform linux/amd64 \
 
 > **Tip:** To process multiple images in parallel, open separate terminal windows and run a different image in each. Monitor your system resources via Docker Desktop to avoid overload.
 
-The full set of commands for all 8 images is in [`scripts/extract-all-images.sh`](./scripts/extract-all-images.sh).
-
 ### Step 4 - Export to CSV with psort
 
 ```bash
@@ -382,24 +373,12 @@ docker run --rm --platform linux/amd64 \
   -v ~/m57-project:/data \
   log2timeline/plaso \
   psort.py -o dynamic \
-  -w /data/csv-files/jo-machine-timeline.csv \
-  /data/plaso-output/jo-machine.plaso
+  -w /data/csv-files/charlie-work-usb-timeline.csv \
+  /data/plaso-output/charlie-work-usb.plaso
 ```
+> **Optional Step:** The raw CSVs are too large to analyze directly. Use Python to create email filtering script to reduce the load.
 
-The full set of export commands is in [`scripts/export-all-csvs.sh`](./scripts/export-all-csvs.sh).
-
-### Step 5 - Filter the Timeline (Optional but Recommended)
-
-The raw CSVs are too large to analyze directly. Use the Python filtering script to reduce the load:
-
-```bash
-# Edit the script to point to your CSV path before running
-python3 scripts/email-activity-filter.py
-```
-
-> **Important:** Open `scripts/email-activity-filter.py` and update the `input_file` variable to match your actual CSV path before running.
-
-### Step 6 - Import to Timesketch
+### Step 5 - Import to Timesketch
 
 Once your Timesketch instance is running, import each `.plaso` file as a separate timeline:
 
@@ -407,13 +386,13 @@ Once your Timesketch instance is running, import each `.plaso` file as a separat
 timesketch_importer \
   --host http://localhost:5000 \
   --username admin \
-  --timeline_name "Jo Machine" \
-  ~/m57-project/plaso-output/jo-machine.plaso
+  --timeline_name "Charlie Work USB" \
+  ~/m57-project/plaso-output/charlie-work-usb.plaso
 ```
 
 Repeat for each of the 8 `.plaso` files, naming each timeline appropriately (e.g., "Jo Work USB", "Charlie Machine").
 
-### Step 7 - Investigate in Timesketch
+### Step 6 - Investigate in Timesketch
 
 Recommended search queries to reproduce our key findings:
 
