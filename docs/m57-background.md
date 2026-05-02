@@ -1,41 +1,11 @@
-# M57 Patents Scenario — Extended Background
+# M57 Patents Scenario — Background
 
-This document provides additional context beyond what's in the main [README](../README.md). For the project overview and our methodology, refer there first.
+The M57 Patents Scenario is a publicly available forensic dataset published by [Digital Corpora](https://digitalcorpora.org/), curated by Simson Garfinkel for forensic education and research. It simulates a small patent research firm — M57.biz — operating over a five-week period in November and December 2009, with daily disk images captured for each employee workstation along with their associated USB drives.
 
-## About Digital Corpora
+We chose this scenario because it provides a realistic corporate environment, multi-source evidence, and daily snapshots — making it ideal for timeline reconstruction work. The dataset is also publicly accessible, which means our entire investigation is reproducible by anyone.
 
-[Digital Corpora](https://digitalcorpora.org/) is a public collection of forensic datasets curated by Simson Garfinkel for digital forensics research and education. The M57 Patents Scenario is one of its most well-known scenarios.
+The dataset includes two main scenarios. We focused on **Part 2 — Exfiltration of Corporate Intellectual Property**, which centers on the suspicion that an employee has been passing proprietary research to an outside party. The original scenario document is available in [`exfiltration-scenario.pdf`](./exfiltration-scenario.pdf).
 
-## Why M57 Was Designed This Way
+The full dataset also includes network packet captures (PCAP) and email server data, which we deliberately did not use — keeping our scope to host-based forensics. A complete real-world investigation would incorporate those additional layers.
 
-The scenario was built to provide **realistic, multi-source evidence over time**. Key design choices that make it valuable for timeline analysis:
-
-- **Daily disk imaging** — captures temporal change, not just a single moment
-- **Multiple users on a shared network** — enables cross-source correlation
-- **Both workstation and removable media** — mirrors real corporate environments
-- **Real noise** — captured from actual user activity, not synthetic data, which means analysts have to filter signal from genuine background activity
-
-## The Two Main Scenarios
-
-The M57 dataset supports two distinct investigation paths:
-
-| Scenario | Focus |
-|---|---|
-| **Part 1 — Inappropriate Material** | Discovery of inappropriate digital content on a company computer |
-| **Part 2 — Exfiltration of Corporate IP** | Theft of proprietary research by a malicious insider (the scenario we used) |
-
-The scenario document for Part 2 is available in this folder as [`exfiltration-scenario.pdf`](./exfiltration-scenario.pdf).
-
-## Evidence in the Full Dataset (Beyond What We Used)
-
-We worked with disk images only. The full dataset also includes:
-
-- **Network packet captures (PCAP)** — would help identify the outside contact
-- **Email server data** — server-side mailbox storage
-- **Daily snapshots** of every workstation across the full 5-week scenario period
-
-We deliberately limited our scope to host-based forensics. A complete real-world investigation would incorporate the network and email server data as well.
-
-## Citation
-
-Garfinkel, S., et al. (2009). "Bringing Science to Digital Forensics with Standardized Forensic Corpora." *Digital Investigation*, Vol. 6.
+**Citation:** Garfinkel, S., et al. (2009). "Bringing Science to Digital Forensics with Standardized Forensic Corpora." *Digital Investigation*, Vol. 6.
