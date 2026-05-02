@@ -15,5 +15,3 @@ This document maps each event in the investigation timeline to the specific Plas
 | Dec 11, 2009 | Hotmail `newmail[1]` artifact present | `filestat` |
 
 Every event in this timeline is reproducible from the original disk images using the commands in the main [README](../README.md#11-how-to-reproduce). To verify any specific IOC, run Plaso against the relevant image and search the resulting CSV for the parser and timestamp.
-
-**Note on timestamp reliability:** All timestamps come from disk artifacts as parsed by Plaso. In a court setting, the possibility of timestomping (deliberate manipulation by an attacker) should be acknowledged. Cross-correlation across multiple independent parsers — as we have here — strengthens confidence in the timeline.
